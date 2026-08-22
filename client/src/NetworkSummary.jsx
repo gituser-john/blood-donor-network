@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 export default function NetworkSummary() {
   const [stats, setStats] = useState(null);
@@ -10,7 +11,7 @@ export default function NetworkSummary() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get('http://localhost:5000/api/summary');
+      const res = await axios.get(`${API_URL}/api/summary`);
       setStats(res.data);
     } catch (err) {
       setError("Failed to load summary: " + (err.response?.data?.error || err.message));
@@ -23,7 +24,6 @@ export default function NetworkSummary() {
     fetchStats();
   }, []);
 
-  // Simple inline styles for the MVP grid
   const cardStyle = {
     border: '1px solid #ddd',
     borderRadius: '8px',

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 export default function DonorNotifications() {
   const [donorId, setDonorId] = useState('');
@@ -13,7 +14,7 @@ export default function DonorNotifications() {
     
     setError(null);
     try {
-      const res = await axios.get(`http://localhost:5000/api/donors/${donorId}/notifications`);
+      const res = await axios.get(`${API_URL}/api/donors/${donorId}/notifications`);
       setNotifications(res.data);
       setHasSearched(true);
     } catch (err) {
@@ -23,8 +24,7 @@ export default function DonorNotifications() {
 
   const handleRespond = async (donationId, status) => {
     try {
-      await axios.patch(`http://localhost:5000/api/donations/${donationId}/respond`, { status });
-      // Remove the notification from the list after responding
+      await axios.patch(`${API_URL}/api/donations/${donationId}/respond`, { status });
       setNotifications(notifications.filter(n => n.donation_id !== donationId));
     } catch (err) {
       alert("Failed to respond: " + (err.response?.data?.error || err.message));
@@ -54,7 +54,6 @@ export default function DonorNotifications() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         {notifications.map((notif) => {
-          // Extract nested data safely based on our Supabase query
           const reqDetails = notif.requests || {};
           const hospitalName = reqDetails.patients?.hospital_name || "Unknown Hospital";
 

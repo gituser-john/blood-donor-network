@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from './config';
 
 export default function RegisterDonor() {
   const [formData, setFormData] = useState({
@@ -13,14 +14,13 @@ export default function RegisterDonor() {
 
   const fetchDonors = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/donors');
+      const res = await axios.get(`${API_URL}/api/donors`);
       setDonors(res.data);
     } catch (error) {
       console.error("Error fetching donors:", error);
     }
   };
 
-  // Fetch donors on component mount
   useEffect(() => {
     fetchDonors();
   }, []);
@@ -33,10 +33,10 @@ export default function RegisterDonor() {
     e.preventDefault();
     setMessage(null);
     try {
-      const res = await axios.post('http://localhost:5000/api/donors', formData);
+      const res = await axios.post(`${API_URL}/api/donors`, formData);
       setMessage({ type: 'success', text: `Donor registered successfully! Assigned ID: ${res.data.donor_id}` });
-      setFormData({ name: '', blood_group: 'A+', phone: '', district: '' }); // Reset form
-      fetchDonors(); // Refresh table
+      setFormData({ name: '', blood_group: 'A+', phone: '', district: '' }); 
+      fetchDonors(); 
     } catch (error) {
       const errorMsg = error.response?.data?.error || error.message;
       setMessage({ type: 'error', text: `Failed to register: ${errorMsg}` });
@@ -45,11 +45,11 @@ export default function RegisterDonor() {
 
   const toggleMedicallyUnfit = async (donor) => {
     try {
-      await axios.put(`http://localhost:5000/api/donors/${donor.donor_id}`, {
-        ...donor, // keep existing data
-        medically_unfit: !donor.medically_unfit // toggle the flag
+      await axios.put(`${API_URL}/api/donors/${donor.donor_id}`, {
+        ...donor,
+        medically_unfit: !donor.medically_unfit 
       });
-      fetchDonors(); // Refresh table to show updated status
+      fetchDonors(); 
     } catch (error) {
       alert("Failed to update status: " + (error.response?.data?.error || error.message));
     }
